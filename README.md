@@ -1,5 +1,3 @@
-<a name="tv-kit"></a>
-
 <h1 align="center">tv-kit</h1>
 
 <p align="center">
@@ -16,7 +14,7 @@
 </p>
 
 <p align="center">
-  <b>中文</b> · <a href="#english">English</a>
+  <b>中文</b> · <a href="./README.en.md">English</a>
 </p>
 
 ---
@@ -47,7 +45,7 @@ TV 没有鼠标、没有触摸，全靠遥控器**上下左右 + 确认/返回**
 
 | 包 | 职责 |
 |---|---|
-| [`@chancestv/tv-focus`](./packages/tv-focus) | 空间导航焦点系统。纯逻辑、无样式。导航引擎 fork 自 [js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation)，外加 Vue 3 适配层（`Focusable` / `FocusSection` / `FocusLayer` 等）。 |
+| [`@chancestv/tv-focus`](./packages/tv-focus) | 空间导航焦点系统。纯逻辑、无样式。提供 Vue 3 适配层（`Focusable` / `FocusSection` / `FocusLayer` 等）。 |
 | [`@chancestv/tv-ui`](./packages/tv-ui) | 基于 tv-focus 的 **E 前缀**基础组件库 + 样式 token。业务层只用这一层即可。 |
 
 > **单例约束**：tv-ui 把 tv-focus 声明为 `peerDependency`，`vue` 同样外置，保证整个应用只有一份 spatial-navigation 单例。
@@ -158,112 +156,3 @@ pnpm typecheck      # 所有包 vue-tsc --noEmit
 [MIT](./LICENSE) © chances
 
 其中 `packages/tv-focus/src/engine/` 目录（fork 自 js-spatial-navigation 的导航引擎）为 **MPL-2.0**，已保留原始 LICENSE 与作者署名。整体包许可标识：tv-focus 为 `MIT AND MPL-2.0`，tv-ui 为 `MIT`。
-
-<br/>
-
----
-
-<a name="english"></a>
-
-<p align="center">
-  <a href="#tv-kit">中文</a> · <b>English</b>
-</p>
-
-## What it solves
-
-Building Vue 3 apps for OTT devices (Android TV / webOS / Tizen) means hitting two walls. tv-kit handles both for you:
-
-### 1. Legacy WebView compatibility
-
-OTT WebViews are commonly stuck around **Chromium 53** — ES2017+ syntax and modern DOM APIs throw outright. The usual fix, `@vitejs/plugin-legacy` on the consumer side, **does not transpile `node_modules` by default**, so imported libraries still break.
-
-tv-kit performs the down-leveling **inside the library** (`build.target: 'chrome53'`). What you consume already runs on Chromium 53 — compatibility is closed-loop, no extra setup on your end.
-
-### 2. Remote-control focus is a genuinely hard problem
-
-A TV has no mouse and no touch — just the remote's **D-pad + OK/Back**. Which means:
-
-- Focus movement follows the **geometric position** of elements on screen, not DOM order;
-- Page transitions, overlays opening/closing, list scrolling — every one needs to track "where focus is now, where it goes next, where it lands on return";
-- KeepAlive revival, first-paint auto-focus, whether Back closes an overlay or pops the route — all timing traps.
-
-tv-kit's core is making **spatial-navigation focus work out of the box**: mark which elements are focusable, wrap regions with layout components, and D-pad navigation, focus memory, overlay focus isolation, and the Back-key stack are all handled automatically. **You barely write any focus logic in app code.**
-
-## Two packages
-
-| Package | Role |
-|---|---|
-| [`@chancestv/tv-focus`](./packages/tv-focus) | Spatial-navigation focus system. Pure logic, no styles. Navigation engine forked from [js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation), plus a Vue 3 adapter layer. |
-| [`@chancestv/tv-ui`](./packages/tv-ui) | **E-prefixed** base components + style tokens, built on tv-focus. App code only touches this layer. |
-
-> **Singleton constraint**: tv-ui declares tv-focus (and `vue`) as `peerDependency`, ensuring a single spatial-navigation instance app-wide.
->
-> **Layering**: app code never imports tv-focus directly — use tv-ui components; tv-ui funnels init through `setupTvFocus()`.
-
-## Install
-
-```bash
-pnpm add @chancestv/tv-ui @chancestv/tv-focus
-```
-
-Styles are not auto-imported by components:
-
-```ts
-import '@chancestv/tv-ui/style.css'
-import '@chancestv/tv-ui/styles/focusable.css'
-```
-
-## Quick start
-
-```ts
-// main.ts — call once at app entry
-import { setupTvFocus } from '@chancestv/tv-ui'
-import '@chancestv/tv-ui/style.css'
-import '@chancestv/tv-ui/styles/focusable.css'
-
-setupTvFocus('your-native-key-event')
-```
-
-```vue
-<template>
-  <EPage>
-    <ERow>
-      <EButton @click="play">Play</EButton>
-      <EButton @click="fav">Favorite</EButton>
-    </ERow>
-  </EPage>
-</template>
-
-<script setup lang="ts">
-import { EPage, ERow, EButton } from '@chancestv/tv-ui'
-</script>
-```
-
-D-pad navigation, first-paint focus, and focus memory all work automatically.
-
-## Components
-
-| Category | Components |
-|---|---|
-| **Page / Layout** | `EPage`, `ERow`, `EColumn`, `EFocusGroup`, `EFocusable` |
-| **Primitives** | `EButton`, `ECard`, `EImage`, `EText`, `ELoadingSpinner` |
-| **Overlays** | `EDialog`, `EDrawer`, `EToast`, `EHintDialog` |
-| **Performance** | `EVirtual` (virtual list) |
-
-Overlay components use `FocusLayer` for focus isolation and overlay-stack management: while open, focus is trapped inside the layer, and Back closes the topmost overlay rather than popping the route.
-
-## Compatibility
-
-- Build output down-leveled to **Chromium 53** (`build.target: 'chrome53'`, `minify: false`).
-- `tsconfig` target `ES2015`, `strict`.
-- Verified on Android TV / webOS / Tizen OTT WebViews.
-
-## Acknowledgements
-
-- **[luke-chang/js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation)** — the spatial-navigation core of `@chancestv/tv-focus` is forked from this project (MPL-2.0). We TS-ified it, removed the jQuery dependency, converted it to ESM, and down-leveled the build target to Chromium 53; the core algorithm is unchanged. See [ATTRIBUTION.md](./packages/tv-focus/src/engine/ATTRIBUTION.md).
-
-## License
-
-[MIT](./LICENSE) © chances
-
-The `packages/tv-focus/src/engine/` directory (navigation engine forked from js-spatial-navigation) is **MPL-2.0**, with the original LICENSE and attribution preserved. Package SPDX: tv-focus is `MIT AND MPL-2.0`, tv-ui is `MIT`.
