@@ -39,6 +39,20 @@ A TV has no mouse and no touch — just the remote's **D-pad + OK/Back**. Which 
 
 tv-kit's core is making **spatial-navigation focus work out of the box**: mark which elements are focusable, wrap regions with layout components, and D-pad navigation, focus memory, overlay focus isolation, and the Back-key stack are all handled automatically. **You barely write any focus logic in app code.**
 
+#### How it finds focus automatically
+
+On each D-pad press, the engine reads candidate elements' live geometry (`getBoundingClientRect`), partitions them into a **3×3 grid** centered on the current focus, then ranks by distance with "straight direction first, diagonal second". So **no focus-relationship table to maintain** — however the layout changes or elements come and go, navigation follows the new positions automatically.
+
+#### Focus lookup is pruned, so low-end boxes keep up
+
+OTT boxes are CPU-weak; scanning every focusable element and calling `getComputedStyle` on each keypress visibly stutters. The engine prunes the candidate set in several layers:
+
+- **Section restriction** (`restrict`): search the current section first by default, only widening outside if nothing is found — most keypresses never leave the section;
+- **Scroll-scope awareness + caching**: candidates are grouped by whether they share the focused element's scroll container (same-container first), with a `WeakMap` caching the element → scroll-container mapping so each keypress doesn't re-walk the DOM;
+- **Directional pre-filtering**: pressing left only compares the left-side groups, never the opposite direction.
+
+The result: only a tiny subset actually enters geometric comparison per keypress, staying responsive even on Chromium 53-class hardware.
+
 ---
 
 ## Two packages
