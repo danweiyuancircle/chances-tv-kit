@@ -9,6 +9,13 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-04
+
+### Removed (BREAKING)
+
+- 移除 `@chancestv/tv-ui` 的 `styles/focusable.css`：该文件是一套未被任何组件使用的备选焦点视觉方案（`.focused-default` / `.focused-gradient` / `.focus-border-animated` 等 class 与 `--chances-tv-focus-*` 系列变量），属遗留死代码。组件实际焦点态由 `style.css` 内的 `.tv-focusable.is-focused` 提供，不受影响。
+- 不再暴露 `@chancestv/tv-ui/styles/focusable.css` 导出入口；`style.css` 也不再拼入该文件。曾 `import '@chancestv/tv-ui/styles/focusable.css'` 或使用上述 class / `--chances-tv-focus-*`（带后缀，如 `-scale-default` / `-bg-gradient`）变量的消费方需自行迁移。注意 `style.css` 仍保留的 `--chances-tv-focus-shadow`（无后缀，焦点框阴影）不受影响。
+
 ## [0.2.0] - 2026-06-04
 
 ### Changed (BREAKING)

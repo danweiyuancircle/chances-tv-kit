@@ -58,7 +58,7 @@ pnpm --filter @chancestv/tv-ui typecheck
 
 - 所有组件 **E 前缀**，纯基础组件（无业务、无项目资产）。组件目录结构 `components/EXxx/index.vue`，复杂组件可拆 `types.ts` / 内部 composable。
 - 组件逻辑较重时抽到 `composables/`（如 `useEPage` / `useOverlay` / `useFocusLockedKeys`），组件薄壳调用。**业务层不直接 import 这些内部 composable**，只用组件。
-- 样式 **不经组件 `import`**：CSS 由 tv-ui 的 build 脚本原样拷到 `dist/styles`，消费方手动引入。`@chancestv/tv-ui/style.css` 是**必引**（build 脚本 `cat` 拼接 tokens + focusable + 组件 css）；`@chancestv/tv-ui/styles/index.css` 是**可选**的侵入式全局 reset（重置宿主页面 margin/padding、锁尺寸、滚动条），独立暴露不并入 style.css。CSS 变量统一 `--chances-tv-` 前缀。改样式打包逻辑看 tv-ui `package.json` 的 `build` 脚本与 `exports`。
+- 样式 **不经组件 `import`**：CSS 由 tv-ui 的 build 脚本原样拷到 `dist/styles`，消费方手动引入。`@chancestv/tv-ui/style.css` 是**必引**（build 脚本 `cat` 拼接 tokens + 组件 css）；`@chancestv/tv-ui/styles/index.css` 是**可选**的侵入式全局 reset（重置宿主页面 margin/padding、锁尺寸、滚动条），独立暴露不并入 style.css。CSS 变量统一 `--chances-tv-` 前缀。改样式打包逻辑看 tv-ui `package.json` 的 `build` 脚本与 `exports`。
 
 ## Release
 
