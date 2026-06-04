@@ -13,13 +13,13 @@ jobs:
       contents: write        # 创建 GitHub Release 需写权限
       id-token: write        # OIDC：npm Trusted Publishing 必需，换取短期发布凭证 + 生成 provenance
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: 10.19.0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
