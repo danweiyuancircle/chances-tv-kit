@@ -1,7 +1,7 @@
 {
-  "name": "@chances/tv-ui",
+  "name": "@chancestv/tv-ui",
   "version": "0.1.0",
-  "description": "TV base UI components (E-prefixed) for Vue 3, built on @chances/tv-focus, tuned for legacy WebView (Chromium 53+).",
+  "description": "TV base UI components (E-prefixed) for Vue 3, built on @chancestv/tv-focus, tuned for legacy WebView (Chromium 53+).",
   "type": "module",
   "license": "MIT",
   "author": "chances",
@@ -37,11 +37,11 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "peerDependencies": {
-    "@chances/tv-focus": "workspace:^",
+    "@chancestv/tv-focus": "workspace:^",
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@chances/tv-focus": "workspace:*",
+    "@chancestv/tv-focus": "workspace:*",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/tsconfig": "^0.5.0",
     "typescript": "^5.3.0",

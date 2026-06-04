@@ -1,28 +1,28 @@
-# @chances/tv-ui
+# @chancestv/tv-ui
 
-面向低版本 WebView（Chromium 53+）的 Vue 3 TV 端基础组件（全部 E 前缀），基于 [`@chances/tv-focus`](https://www.npmjs.com/package/@chances/tv-focus) 的空间导航焦点系统。
+面向低版本 WebView（Chromium 53+）的 Vue 3 TV 端基础组件（全部 E 前缀），基于 [`@chancestv/tv-focus`](https://www.npmjs.com/package/@chancestv/tv-focus) 的空间导航焦点系统。
 
 ## 安装
 
 ```bash
-pnpm add @chances/tv-ui @chances/tv-focus vue
+pnpm add @chancestv/tv-ui @chancestv/tv-focus vue
 ```
 
-`@chances/tv-focus` 是 peerDependency，确保整个应用只有一份 spatial-navigation 单例。
+`@chancestv/tv-focus` 是 peerDependency，确保整个应用只有一份 spatial-navigation 单例。
 
 ## 用法
 
 ```ts
 // 应用入口
-import { setupTvFocus } from '@chances/tv-ui'
-import '@chances/tv-ui/style.css'   // 全部样式：设计 token + 全局焦点样式 + 组件样式
+import { setupTvFocus } from '@chancestv/tv-ui'
+import '@chancestv/tv-ui/style.css'   // 全部样式：设计 token + 全局焦点样式 + 组件样式
 
 setupTvFocus('your-native-key-event-name')
 ```
 
 ```vue
 <script setup lang="ts">
-import { EPage, ERow, EColumn, EButton, EVirtual } from '@chances/tv-ui'
+import { EPage, ERow, EColumn, EButton, EVirtual } from '@chancestv/tv-ui'
 </script>
 ```
 

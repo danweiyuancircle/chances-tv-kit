@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { useFocusable } from '@chances/tv-focus'
+import { useFocusable } from '@chancestv/tv-focus'
 
 interface Props {
   /** 焦点 key；无值时元素不参与焦点 */

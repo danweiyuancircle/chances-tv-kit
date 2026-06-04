@@ -22,7 +22,7 @@
 
 <script setup lang="ts" generic="T">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { FocusSection } from '@chances/tv-focus'
+import { FocusSection } from '@chancestv/tv-focus'
 import type { EVirtualProps } from './types'
 
 /**

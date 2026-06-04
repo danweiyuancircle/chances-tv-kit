@@ -4,7 +4,7 @@
  * 抽到独立文件并导出：泛型组件（generic="T"）的 default export 若引用组件内私有
  * interface，vue-tsc 生成 d.ts 时报 TS4082 并跳过该组件类型。导出公共类型可消除该问题。
  */
-import type { Restrict, EnterTo } from '@chances/tv-focus'
+import type { Restrict, EnterTo } from '@chancestv/tv-focus'
 
 /**
  * 虚拟化容器 props。一套覆盖纵向列表 / 横向列表 / N 列网格。

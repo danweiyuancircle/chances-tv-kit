@@ -1,4 +1,4 @@
-# @chances/tv-focus
+# @chancestv/tv-focus
 
 面向低版本 WebView（Chromium 53+）的 Vue 3 TV 端空间导航焦点系统。遥控器方向键在 DOM 元素间按几何位置移动焦点，支持 section 分区、模态层栈、记忆焦点。
 
@@ -7,13 +7,13 @@
 ## 安装
 
 ```bash
-pnpm add @chances/tv-focus vue
+pnpm add @chancestv/tv-focus vue
 ```
 
 ## 用法
 
 ```ts
-import { setupFocus, nativeKeyAdapter } from '@chances/tv-focus'
+import { setupFocus, nativeKeyAdapter } from '@chancestv/tv-focus'
 
 // 应用入口调用一次
 setupFocus({ defaults: { rememberSource: true } })
@@ -23,7 +23,7 @@ nativeKeyAdapter('your-native-key-event-name')
 
 ```vue
 <script setup lang="ts">
-import { FocusSection, Focusable } from '@chances/tv-focus'
+import { FocusSection, Focusable } from '@chancestv/tv-focus'
 </script>
 
 <template>

@@ -6,7 +6,7 @@ import { onUnmounted, watch, type Ref } from 'vue'
  * enabled 为 true 时绑定，false 时解绑。EDialog/EDrawer 内部用。
  *
  * 事件名 'ott:native-keydown' 是壳↔H5 桥契约常量（见 template/bridge-contract.md），
- * 这里用字面量以免 tv-ui 反向依赖 @chances/tv-focus。
+ * 这里用字面量以免 tv-ui 反向依赖 @chancestv/tv-focus。
  */
 const OTT_NATIVE_KEYDOWN = 'ott:native-keydown'
 

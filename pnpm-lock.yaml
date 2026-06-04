@@ -38,7 +38,7 @@ importers:
 
   packages/tv-ui:
     devDependencies:
-      '@chances/tv-focus':
+      '@chancestv/tv-focus':
         specifier: workspace:*
         version: link:../tv-focus
       '@vitejs/plugin-vue':
@@ -62,6 +62,25 @@ importers:
       vue-tsc:
         specifier: ^2.0.8
         version: 2.2.12(typescript@5.9.3)
+
+  playground:
+    dependencies:
+      '@chancestv/tv-focus':
+        specifier: workspace:*
+        version: link:../packages/tv-focus
+      '@chancestv/tv-ui':
+        specifier: workspace:*
+        version: link:../packages/tv-ui
+      vue:
+        specifier: ^3.4.0
+        version: 3.5.35(typescript@5.9.3)
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^5.0.0
+        version: 5.2.4(vite@5.4.21)(vue@3.5.35(typescript@5.9.3))
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.21
 
 packages:
 

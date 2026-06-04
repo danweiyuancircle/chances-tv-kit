@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFocusable } from '@chances/tv-focus'
+import { useFocusable } from '@chancestv/tv-focus'
 
 interface Props {
   focusKey?: string

@@ -1,5 +1,5 @@
 import { computed, nextTick, watch, type Ref } from 'vue'
-import { SpatialNavigation } from '@chances/tv-focus'
+import { SpatialNavigation } from '@chancestv/tv-focus'
 import { useFocusLockedKeys } from './useFocusLockedKeys'
 
 interface Options {

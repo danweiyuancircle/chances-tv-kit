@@ -3,7 +3,7 @@ import {
   useFocusSection,
   useKeepAliveFocus,
   SpatialNavigation,
-} from '@chances/tv-focus'
+} from '@chancestv/tv-focus'
 
 /**
  * EPage 的纯逻辑：注册页面级 section（last-focused 记忆）+ KeepAlive 暂停/恢复 +

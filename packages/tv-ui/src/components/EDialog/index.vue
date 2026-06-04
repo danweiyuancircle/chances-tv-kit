@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { toRef, watch } from 'vue'
-import { FocusLayer } from '@chances/tv-focus'
+import { FocusLayer } from '@chancestv/tv-focus'
 import EFocusGroup from '../EFocusGroup/index.vue'
 import { useOverlay } from '../../composables/useOverlay'
 

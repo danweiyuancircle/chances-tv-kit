@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import EFocusGroup from '../EFocusGroup/index.vue'
-import type { Restrict, EnterTo, LeaveFor } from '@chances/tv-focus'
+import type { Restrict, EnterTo, LeaveFor } from '@chancestv/tv-focus'
 
 interface Props {
   id?: string

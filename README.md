@@ -6,10 +6,10 @@
 
 | 包 | 说明 |
 |---|---|
-| [`@chances/tv-focus`](./packages/tv-focus) | TV 空间导航焦点系统（引擎 fork 自 js-spatial-navigation）+ Vue 3 适配层。纯逻辑，无样式。 |
-| [`@chances/tv-ui`](./packages/tv-ui) | 基于 `@chances/tv-focus` 的 TV 基础组件（E 前缀）。 |
+| [`@chancestv/tv-focus`](./packages/tv-focus) | TV 空间导航焦点系统（引擎 fork 自 js-spatial-navigation）+ Vue 3 适配层。纯逻辑，无样式。 |
+| [`@chancestv/tv-ui`](./packages/tv-ui) | 基于 `@chancestv/tv-focus` 的 TV 基础组件（E 前缀）。 |
 
-`@chances/tv-ui` 把 `@chances/tv-focus` 作为 peerDependency，确保整个应用只存在一份 spatial-navigation 单例。
+`@chancestv/tv-ui` 把 `@chancestv/tv-focus` 作为 peerDependency，确保整个应用只存在一份 spatial-navigation 单例。
 
 ## 兼容目标
 

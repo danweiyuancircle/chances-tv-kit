@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { useFocusSection } from '@chances/tv-focus'
-import type { Restrict, EnterTo, LeaveFor } from '@chances/tv-focus'
+import { useFocusSection } from '@chancestv/tv-focus'
+import type { Restrict, EnterTo, LeaveFor } from '@chancestv/tv-focus'
 
 interface Props {
   id?: string
@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 注：section / restrict / enterTo / leaveFor / defaultElement 在 mount 时读取一次，
-// 不支持运行期动态变更（与 @chances/tv-focus 的 FocusSection 行为一致）。
+// 不支持运行期动态变更（与 @chancestv/tv-focus 的 FocusSection 行为一致）。
 let sectionId = ''
 if (props.section) {
   const ctx = useFocusSection({

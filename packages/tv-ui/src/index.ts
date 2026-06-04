@@ -1,9 +1,9 @@
 /**
- * @chances/tv-ui
+ * @chancestv/tv-ui
  *
- * 基于 @chances/tv-focus 的 TV 端纯基础组件（全部 E 前缀，无业务无项目资产）。
- * 设计 token：import '@chances/tv-ui/style.css'
- * 全局样式：import '@chances/tv-ui/styles/index.css'
+ * 基于 @chancestv/tv-focus 的 TV 端纯基础组件（全部 E 前缀，无业务无项目资产）。
+ * 设计 token：import '@chancestv/tv-ui/style.css'
+ * 全局样式：import '@chancestv/tv-ui/styles/index.css'
  */
 export { default as EImage } from './components/EImage/index.vue'
 export { default as EButton } from './components/EButton/index.vue'
