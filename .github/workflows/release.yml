@@ -10,7 +10,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write        # 创建 GitHub Release 需写权限
       id-token: write        # OIDC：npm Trusted Publishing 必需，换取短期发布凭证 + 生成 provenance
     steps:
       - uses: actions/checkout@v4
@@ -25,6 +25,25 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: pnpm
 
+      # tag 版本号（去掉 v 前缀），供后续步骤复用
+      - name: 解析版本号
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      # 校验：tag 版本必须与两个包 package.json 及 CHANGELOG 段落一致，否则中止发布
+      - name: 校验版本一致性
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          for pkg in packages/tv-focus packages/tv-ui; do
+            pv=$(node -p "require('./$pkg/package.json').version")
+            if [ "$pv" != "$VERSION" ]; then
+              echo "::error::$pkg 版本 $pv 与 tag 版本 $VERSION 不一致"
+              exit 1
+            fi
+          done
+          node scripts/extract-changelog.mjs "$VERSION" > /dev/null
+
       # node20 自带 npm 过旧，OIDC + provenance 需 npm ≥ 11.5.1
       - run: npm install -g npm@latest
 
@@ -35,3 +54,14 @@ jobs:
       # private 包（playground）会被自动跳过；workspace:^ 协议发布时由 pnpm 替换为真实版本号
       # OIDC 模式下无需 NODE_AUTH_TOKEN，发布凭证由 id-token 自动换取
       - run: pnpm -r publish --access public --no-git-checks
+
+      # 发布成功后创建 GitHub Release，正文取自 CHANGELOG 对应版本段落
+      - name: 创建 GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          node scripts/extract-changelog.mjs "$VERSION" > RELEASE_NOTES.md
+          gh release create "$GITHUB_REF_NAME" \
+            --title "v$VERSION" \
+            --notes-file RELEASE_NOTES.md
