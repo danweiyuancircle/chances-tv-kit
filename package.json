@@ -1,0 +1,22 @@
+{
+  "name": "tv-kit",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.19.0",
+  "description": "TV spatial-navigation focus system + base UI components for Vue 3, tuned for legacy WebView (Chromium 53+).",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter playground dev",
+    "typecheck": "pnpm -r typecheck",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@chances/tv-focus",
+  "version": "0.1.0",
+  "description": "TV spatial-navigation focus system for Vue 3, tuned for legacy WebView (Chromium 53+).",
+  "type": "module",
+  "license": "MIT AND MPL-2.0",
+  "author": "chances",
+  "keywords": [
+    "tv",
+    "spatial-navigation",
+    "focus",
+    "vue3",
+    "remote-control",
+    "android-tv",
+    "webos",
+    "tizen",
+    "chromium-53"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/tsconfig": "^0.5.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^4.2.0",
+    "vue": "^3.4.0",
+    "vue-tsc": "^2.0.8"
+  }
+}
