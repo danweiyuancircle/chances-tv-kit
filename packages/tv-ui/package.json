@@ -1,6 +1,6 @@
 {
   "name": "@chancestv/tv-ui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "TV base UI components (E-prefixed) for Vue 3, built on @chancestv/tv-focus, tuned for legacy WebView (Chromium 53+).",
   "type": "module",
   "license": "MIT",

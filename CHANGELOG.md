@@ -9,6 +9,17 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-04
+
+### Changed (BREAKING)
+
+- `@chancestv/tv-ui` CSS 变量统一命名空间为 `--chances-tv-` 前缀：`--tv-*` → `--chances-tv-*`，`--focus-*` → `--chances-tv-focus-*`（变量值不变，仅重命名）。已覆盖旧变量名做主题定制的消费方需同步改名。
+
+### Fixed
+
+- `@chancestv/tv-ui` 暴露全局重置样式 `./styles/index.css`，修复其既未合进 `style.css`、`exports` 也未暴露导致消费方无从引入的问题；改为独立可选引入，避免侵入式 reset 强制污染宿主页面。
+- 去掉 `index.css` 顶部冗余的 `focusable.css` `@import`，并修掉 README / playground 对 `focusable.css` 的重复引入（`style.css` 已含）。
+
 ## [0.1.1] - 2026-06-04
 
 ### Changed
