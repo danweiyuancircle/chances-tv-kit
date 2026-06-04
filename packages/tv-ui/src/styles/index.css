@@ -1,4 +1,6 @@
-@import './focusable.css';
+/* 全局重置：侵入式（重置宿主页面 margin/padding、锁尺寸、滚动条等）。
+   可选引入：仅在希望 tv-ui 接管全局基础样式时 import '@chancestv/tv-ui/styles/index.css'。
+   设计 token / 焦点态 / 组件样式已在 style.css 内，与本文件无依赖关系。 */
 
 * {
   margin: 0;

@@ -63,8 +63,8 @@ pnpm add @chancestv/tv-ui @chancestv/tv-focus
 Styles are not auto-imported by components:
 
 ```ts
-import '@chancestv/tv-ui/style.css'
-import '@chancestv/tv-ui/styles/focusable.css'
+import '@chancestv/tv-ui/style.css'        // required: design tokens + focus state + component styles (focusable included)
+import '@chancestv/tv-ui/styles/index.css' // optional: global reset (resets host page margin/padding, locks size, scrollbar, etc.)
 ```
 
 ---
@@ -75,7 +75,6 @@ import '@chancestv/tv-ui/styles/focusable.css'
 // main.ts — call once at app entry
 import { setupTvFocus } from '@chancestv/tv-ui'
 import '@chancestv/tv-ui/style.css'
-import '@chancestv/tv-ui/styles/focusable.css'
 
 setupTvFocus('your-native-key-event')
 ```

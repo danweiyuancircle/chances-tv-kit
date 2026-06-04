@@ -64,8 +64,8 @@ pnpm add @chancestv/tv-ui @chancestv/tv-focus
 样式不经组件 `import`，需手动引入：
 
 ```ts
-import '@chancestv/tv-ui/style.css'           // 设计 token + 基础样式
-import '@chancestv/tv-ui/styles/focusable.css' // 聚焦态样式
+import '@chancestv/tv-ui/style.css'        // 必引：设计 token + 焦点态 + 组件样式（已含 focusable）
+import '@chancestv/tv-ui/styles/index.css' // 可选：全局重置（重置宿主页面 margin/padding、锁尺寸、滚动条等）
 ```
 
 ---
@@ -76,7 +76,6 @@ import '@chancestv/tv-ui/styles/focusable.css' // 聚焦态样式
 // main.ts —— 应用入口调一次，初始化焦点系统 + 透传 OTT 原生遥控按键
 import { setupTvFocus } from '@chancestv/tv-ui'
 import '@chancestv/tv-ui/style.css'
-import '@chancestv/tv-ui/styles/focusable.css'
 
 setupTvFocus('your-native-key-event') // 传入设备原生按键事件名
 ```

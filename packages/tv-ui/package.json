@@ -30,6 +30,7 @@
       "import": "./dist/index.js"
     },
     "./style.css": "./dist/style.css",
+    "./styles/index.css": "./dist/styles/index.css",
     "./styles/tokens.css": "./dist/styles/tokens.css",
     "./styles/focusable.css": "./dist/styles/focusable.css"
   },
