@@ -1,18 +1,18 @@
 :root {
-  --tv-color-bg: #0f172a;
-  --tv-color-surface: #1e293b;
-  --tv-color-surface-hover: #334155;
-  --tv-color-border: transparent;
-  --tv-color-focus: #38bdf8;
-  --tv-color-text: #e4e4e7;
-  --tv-color-text-muted: #94a3b8;
-  --tv-color-error: #f87171;
+  --chances-tv-color-bg: #0f172a;
+  --chances-tv-color-surface: #1e293b;
+  --chances-tv-color-surface-hover: #334155;
+  --chances-tv-color-border: transparent;
+  --chances-tv-color-focus: #38bdf8;
+  --chances-tv-color-text: #e4e4e7;
+  --chances-tv-color-text-muted: #94a3b8;
+  --chances-tv-color-error: #f87171;
 
-  --tv-radius: 8px;
-  --tv-radius-lg: 12px;
+  --chances-tv-radius: 8px;
+  --chances-tv-radius-lg: 12px;
 
-  --tv-focus-border-width: 4px;
-  --tv-focus-shadow: 0 0 0 4px rgba(56, 189, 248, 0.4);
+  --chances-tv-focus-border-width: 4px;
+  --chances-tv-focus-shadow: 0 0 0 4px rgba(56, 189, 248, 0.4);
 }
 
 .tv-focusable {
@@ -23,5 +23,5 @@
 .tv-focusable.is-focused {
   z-index: 1;
   transform: scale(1.04);
-  box-shadow: var(--tv-focus-shadow);
+  box-shadow: var(--chances-tv-focus-shadow);
 }

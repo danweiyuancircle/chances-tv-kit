@@ -57,7 +57,7 @@ function handleClick() {
 <style scoped>
 .e-button {
   border: 0;
-  border-radius: var(--tv-radius);
+  border-radius: var(--chances-tv-radius);
   font-family: inherit;
   cursor: pointer;
   display: inline-flex;
@@ -73,8 +73,8 @@ function handleClick() {
 .e-button--md { padding: 12px 22px; font-size: 16px; }
 .e-button--lg { padding: 16px 28px; font-size: 18px; }
 
-.e-button--primary { background: var(--tv-color-focus); color: #0b1220; }
-.e-button--secondary { background: var(--tv-color-surface); color: var(--tv-color-text); }
-.e-button--ghost { background: transparent; color: var(--tv-color-text); }
-.e-button--danger { background: var(--tv-color-error); color: #0b1220; }
+.e-button--primary { background: var(--chances-tv-color-focus); color: #0b1220; }
+.e-button--secondary { background: var(--chances-tv-color-surface); color: var(--chances-tv-color-text); }
+.e-button--ghost { background: transparent; color: var(--chances-tv-color-text); }
+.e-button--danger { background: var(--chances-tv-color-error); color: #0b1220; }
 </style>

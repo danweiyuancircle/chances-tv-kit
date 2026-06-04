@@ -3,40 +3,40 @@
 /* CSS 变量定义 */
 :root {
   /* 焦点颜色 - 统一使用渐变色 */
-  --focus-primary-color: #667eea;
-  --focus-secondary-color: #764ba2;
-  --focus-border-color: #e9982b;
-  --focus-border-width: 3px;
+  --chances-tv-focus-primary-color: #667eea;
+  --chances-tv-focus-secondary-color: #764ba2;
+  --chances-tv-focus-border-color: #e9982b;
+  --chances-tv-focus-border-width: 3px;
   
   /* 圆角 - 统一圆角大小 */
-  --focus-border-radius: 12px;
+  --chances-tv-focus-border-radius: 12px;
   
   /* 焦点效果 */
-  --focus-scale-default: 1.05;
-  --focus-scale-small: 1.03;
-  --focus-scale-large: 1.08;
+  --chances-tv-focus-scale-default: 1.05;
+  --chances-tv-focus-scale-small: 1.03;
+  --chances-tv-focus-scale-large: 1.08;
   
   /* 阴影效果 - 统一阴影 */
-  --focus-shadow-default: 0 8px 24px rgba(102, 126, 234, 0.5);
-  --focus-shadow-small: 0 4px 16px rgba(102, 126, 234, 0.4);
-  --focus-shadow-large: 0 12px 32px rgba(102, 126, 234, 0.6);
+  --chances-tv-focus-shadow-default: 0 8px 24px rgba(102, 126, 234, 0.5);
+  --chances-tv-focus-shadow-small: 0 4px 16px rgba(102, 126, 234, 0.4);
+  --chances-tv-focus-shadow-large: 0 12px 32px rgba(102, 126, 234, 0.6);
   
   /* 过渡动画 */
-  --focus-transition: all 0.3s ease-out;
-  --focus-transition-fast: all 0.2s ease;
+  --chances-tv-focus-transition: all 0.3s ease-out;
+  --chances-tv-focus-transition-fast: all 0.2s ease;
   
   /* 背景效果 */
-  --focus-bg-overlay: rgba(102, 126, 234, 0.15);
-  --focus-bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --chances-tv-focus-bg-overlay: rgba(102, 126, 234, 0.15);
+  --chances-tv-focus-bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   
   /* 边框偏移 */
-  --focus-border-offset: -4px;
+  --chances-tv-focus-border-offset: -4px;
 }
 
 /* 基础可聚焦样式 */
 .focusable-base {
   cursor: pointer;
-  /* transition: var(--focus-transition); */
+  /* transition: var(--chances-tv-focus-transition); */
   outline: none;
 }
 
@@ -46,57 +46,57 @@
 
 /* 聚焦状态 - 默认（统一样式） */
 .focused-default {
-  border-color: var(--focus-border-color) !important;
-  transform: scale(var(--focus-scale-default));
-  box-shadow: var(--focus-shadow-default);
+  border-color: var(--chances-tv-focus-border-color) !important;
+  transform: scale(var(--chances-tv-focus-scale-default));
+  box-shadow: var(--chances-tv-focus-shadow-default);
   z-index: 10;
 }
 
 /* 聚焦状态 - 小缩放 */
 .focused-small {
-  transform: scale(var(--focus-scale-small));
-  box-shadow: var(--focus-shadow-small);
+  transform: scale(var(--chances-tv-focus-scale-small));
+  box-shadow: var(--chances-tv-focus-shadow-small);
   z-index: 10;
 }
 
 /* 聚焦状态 - 大缩放 */
 .focused-large {
-  transform: scale(var(--focus-scale-large));
-  box-shadow: var(--focus-shadow-large);
+  transform: scale(var(--chances-tv-focus-scale-large));
+  box-shadow: var(--chances-tv-focus-shadow-large);
   z-index: 10;
 }
 
 /* 聚焦状态 - 带背景渐变 */
 .focused-gradient {
-  background: var(--focus-bg-gradient) !important;
-  transform: scale(var(--focus-scale-default));
-  box-shadow: var(--focus-shadow-default);
+  background: var(--chances-tv-focus-bg-gradient) !important;
+  transform: scale(var(--chances-tv-focus-scale-default));
+  box-shadow: var(--chances-tv-focus-shadow-default);
   z-index: 10;
 }
 
 /* 聚焦状态 - 带背景叠加 */
 .focused-overlay {
-  background: var(--focus-bg-overlay) !important;
-  transform: scale(var(--focus-scale-small));
-  box-shadow: var(--focus-shadow-small);
+  background: var(--chances-tv-focus-bg-overlay) !important;
+  transform: scale(var(--chances-tv-focus-scale-small));
+  box-shadow: var(--chances-tv-focus-shadow-small);
   z-index: 10;
 }
 
 /* 聚焦边框动画效果 - 统一样式 */
 .focus-border-animated {
   position: relative;
-  border-radius: var(--focus-border-radius);
+  border-radius: var(--chances-tv-focus-border-radius);
 }
 
 .focus-border-animated::after {
   content: '';
   position: absolute;
-  top: var(--focus-border-offset);
-  left: var(--focus-border-offset);
-  right: var(--focus-border-offset);
-  bottom: var(--focus-border-offset);
-  border-radius: var(--focus-border-radius);
-  border: var(--focus-border-width) solid transparent;
+  top: var(--chances-tv-focus-border-offset);
+  left: var(--chances-tv-focus-border-offset);
+  right: var(--chances-tv-focus-border-offset);
+  bottom: var(--chances-tv-focus-border-offset);
+  border-radius: var(--chances-tv-focus-border-radius);
+  border: var(--chances-tv-focus-border-width) solid transparent;
   pointer-events: none;
   transition: all 0.3s ease;
   opacity: 0;
@@ -106,7 +106,7 @@
 .focus-border-animated.focused-small::after,
 .focus-border-animated.focused-large::after,
 .focus-border-animated.focused::after {
-  border-color: var(--focus-border-color);
+  border-color: var(--chances-tv-focus-border-color);
   opacity: 1;
   animation: pulse-border 1.5s ease-in-out infinite;
 }

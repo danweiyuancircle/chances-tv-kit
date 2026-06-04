@@ -122,9 +122,9 @@ const imgStyle = computed(() => ({
 
 <style scoped>
 .e-image {
-  border-radius: var(--tv-radius);
+  border-radius: var(--chances-tv-radius);
   overflow: hidden;
-  background: var(--tv-color-surface);
+  background: var(--chances-tv-color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,18 +141,18 @@ const imgStyle = computed(() => ({
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--tv-color-text-muted);
+  color: var(--chances-tv-color-text-muted);
   font-size: 14px;
 }
 .e-image__error {
-  color: var(--tv-color-error);
+  color: var(--chances-tv-color-error);
   background: rgba(248, 113, 113, 0.08);
 }
 .e-image__spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid var(--tv-color-surface-hover);
-  border-top-color: var(--tv-color-focus);
+  border: 3px solid var(--chances-tv-color-surface-hover);
+  border-top-color: var(--chances-tv-color-focus);
   border-radius: 50%;
   animation: e-image-spin 0.9s linear infinite;
 }

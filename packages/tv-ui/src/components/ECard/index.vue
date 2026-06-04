@@ -61,8 +61,8 @@ function handleClick() {
 
 <style scoped>
 .e-card {
-  background: var(--tv-color-surface);
-  border-radius: var(--tv-radius-lg);
+  background: var(--chances-tv-color-surface);
+  border-radius: var(--chances-tv-radius-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -70,7 +70,7 @@ function handleClick() {
 .e-card__media {
   width: 100%;
   overflow: hidden;
-  background: var(--tv-color-surface-hover);
+  background: var(--chances-tv-color-surface-hover);
 }
 .e-card__media img {
   width: 100%;
@@ -79,6 +79,6 @@ function handleClick() {
   display: block;
 }
 .e-card__body { padding: 12px 14px; }
-.e-card__title { font-size: 16px; color: var(--tv-color-text); margin-bottom: 4px; }
-.e-card__desc { font-size: 13px; color: var(--tv-color-text-muted); }
+.e-card__title { font-size: 16px; color: var(--chances-tv-color-text); margin-bottom: 4px; }
+.e-card__desc { font-size: 13px; color: var(--chances-tv-color-text-muted); }
 </style>
