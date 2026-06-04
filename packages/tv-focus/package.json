@@ -5,6 +5,11 @@
   "type": "module",
   "license": "MIT AND MPL-2.0",
   "author": "chances",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danweiyuancircle/chances-tv-kit.git",
+    "directory": "packages/tv-focus"
+  },
   "keywords": [
     "tv",
     "spatial-navigation",

@@ -5,6 +5,11 @@
   "type": "module",
   "license": "MIT",
   "author": "chances",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danweiyuancircle/chances-tv-kit.git",
+    "directory": "packages/tv-ui"
+  },
   "keywords": [
     "tv",
     "vue3",
