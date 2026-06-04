@@ -58,7 +58,48 @@ pnpm --filter @chancestv/tv-ui typecheck
 
 - 所有组件 **E 前缀**，纯基础组件（无业务、无项目资产）。组件目录结构 `components/EXxx/index.vue`，复杂组件可拆 `types.ts` / 内部 composable。
 - 组件逻辑较重时抽到 `composables/`（如 `useEPage` / `useOverlay` / `useFocusLockedKeys`），组件薄壳调用。**业务层不直接 import 这些内部 composable**，只用组件。
-- 样式 **不经组件 `import`**：CSS 由 tv-ui 的 build 脚本原样拷到 `dist/styles`，消费方手动引入（`@chancestv/tv-ui/style.css` 设计 token、`/styles/*.css` 等）。改样式打包逻辑看 tv-ui `package.json` 的 `build` 脚本（含 `cat` 拼接 tokens+focusable+组件 css）。
+- 样式 **不经组件 `import`**：CSS 由 tv-ui 的 build 脚本原样拷到 `dist/styles`，消费方手动引入。`@chancestv/tv-ui/style.css` 是**必引**（build 脚本 `cat` 拼接 tokens + focusable + 组件 css）；`@chancestv/tv-ui/styles/index.css` 是**可选**的侵入式全局 reset（重置宿主页面 margin/padding、锁尺寸、滚动条），独立暴露不并入 style.css。CSS 变量统一 `--chances-tv-` 前缀。改样式打包逻辑看 tv-ui `package.json` 的 `build` 脚本与 `exports`。
+
+## Release
+
+两个发布包 **锁步发版，共用同一版本号**（CI 强制校验两包 `package.json` 版本与 tag 一致）。发布由**推送 `v*` tag 触发 GitHub Actions**（`.github/workflows/release.yml`）自动完成，本地不跑 publish；npm 用 OIDC Trusted Publishing（无 `NPM_TOKEN`，自动生成 provenance）。
+
+### 包列表
+
+| 包名 | scope | 版本文件 |
+|------|-------|---------|
+| `@chancestv/tv-focus` | tv-focus | `packages/tv-focus/package.json` |
+| `@chancestv/tv-ui` | tv-ui | `packages/tv-ui/package.json` |
+
+- 测试命令：（尚未接入测试框架，见上文「测试现状」）
+- 构建命令：`pnpm -r build`（CI 执行；本地验证同此）
+- 发布命令：`pnpm -r publish --access public --no-git-checks`（**仅 CI 执行**，private 包 playground 自动跳过）
+- 验证命令：`npm view @chancestv/tv-ui version` / `npm view @chancestv/tv-focus version`
+
+### 发版步骤
+
+1. 两包 `package.json` `version` 同步 bump 到目标版本（破坏性变更在 0.x 阶段升 minor）。
+2. 根 `CHANGELOG.md` 新增 `## [x.y.z] - 日期` 段（Keep a Changelog 格式，`scripts/extract-changelog.mjs` 据此提取作 GitHub Release 正文）。
+3. 本地预演 CI 校验：两包版本一致 + `node scripts/extract-changelog.mjs <version>` 能取到段落 + `pnpm -r build` 通过。
+4. commit（`chore: 发布 v<version>`）→ 打 tag `v<version>` → `git push origin main` 与 `git push origin v<version>`（lightweight tag，需显式推）。
+5. CI 跑完后 `npm view` 验证。
+
+### Tag 命名
+
+`v<version>`，如 `v0.2.0`（两包同号，故用统一 `v*` 而非 per-package tag）。
+
+### CHANGELOG
+
+手写根 `CHANGELOG.md`（无自动生成工具）。CI 的 `scripts/extract-changelog.mjs` 按 `## [version]` 段抽取，找不到该段则发布中止。
+
+## Git Commit Scope
+
+单模块变更必须带 scope，跨模块省略。枚举值：
+
+- `tv-focus` — `packages/tv-focus`
+- `tv-ui` — `packages/tv-ui`
+- `playground` — `playground`
+- 跨包 / 仓库级（CI、根配置、文档站等）→ 省略 scope
 
 ## 注意
 
