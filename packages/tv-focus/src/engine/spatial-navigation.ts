@@ -112,300 +112,196 @@ var $: any = null;
     return rect;
   }
 
-  function partition(rects, targetRect, straightOverlapThreshold) {
-    var groups = [[], [], [], [], [], [], [], [], []];
+  /*****************************************/
+  /* Android FocusFinder 加权距离模型（ES5）*/
+  /*****************************************/
+  // 移植自 android.view.FocusFinder：候选先过 isCandidate 方向门，
+  // 再两两 isBetterCandidate 比较（beam 内优先 + 13*major²+minor² 加权距离）。
+  // direction 用字符串 'left'|'right'|'up'|'down'；rect 用 getRect 结构（含 center）。
 
-    for (var i = 0; i < rects.length; i++) {
-      var rect = rects[i];
-      var center = rect.center;
-      var x, y, groupId;
-
-      if (center.x < targetRect.left) {
-        x = 0;
-      } else if (center.x <= targetRect.right) {
-        x = 1;
-      } else {
-        x = 2;
-      }
-
-      if (center.y < targetRect.top) {
-        y = 0;
-      } else if (center.y <= targetRect.bottom) {
-        y = 1;
-      } else {
-        y = 2;
-      }
-
-      groupId = y * 3 + x;
-      groups[groupId].push(rect);
-
-      if ([0, 2, 6, 8].indexOf(groupId) !== -1) {
-        var threshold = straightOverlapThreshold;
-
-        if (rect.left <= targetRect.right - targetRect.width * threshold) {
-          if (groupId === 2) {
-            groups[1].push(rect);
-          } else if (groupId === 8) {
-            groups[7].push(rect);
-          }
-        }
-
-        if (rect.right >= targetRect.left + targetRect.width * threshold) {
-          if (groupId === 0) {
-            groups[1].push(rect);
-          } else if (groupId === 6) {
-            groups[7].push(rect);
-          }
-        }
-
-        if (rect.top <= targetRect.bottom - targetRect.height * threshold) {
-          if (groupId === 6) {
-            groups[3].push(rect);
-          } else if (groupId === 8) {
-            groups[5].push(rect);
-          }
-        }
-
-        if (rect.bottom >= targetRect.top + targetRect.height * threshold) {
-          if (groupId === 0) {
-            groups[3].push(rect);
-          } else if (groupId === 2) {
-            groups[5].push(rect);
-          }
-        }
-      }
+  function snMajorAxisDistanceRaw(direction, source, dest) {
+    switch (direction) {
+      case 'left':  return source.left - dest.right;
+      case 'right': return dest.left - source.right;
+      case 'up':    return source.top - dest.bottom;
+      case 'down':  return dest.top - source.bottom;
+      default:      return 0;
     }
-
-    return groups;
+  }
+  function snMajorAxisDistance(direction, source, dest) {
+    return Math.max(0, snMajorAxisDistanceRaw(direction, source, dest));
+  }
+  function snMajorAxisDistanceToFarEdgeRaw(direction, source, dest) {
+    switch (direction) {
+      case 'left':  return source.left - dest.left;
+      case 'right': return dest.right - source.right;
+      case 'up':    return source.top - dest.top;
+      case 'down':  return dest.bottom - source.bottom;
+      default:      return 0;
+    }
+  }
+  function snMajorAxisDistanceToFarEdge(direction, source, dest) {
+    return Math.max(1, snMajorAxisDistanceToFarEdgeRaw(direction, source, dest));
+  }
+  function snMinorAxisDistance(direction, source, dest) {
+    // 引擎 center.x/y 已是中心点，等价 Android 的 top+height/2 / left+width/2
+    switch (direction) {
+      case 'left':
+      case 'right':
+        return Math.abs(source.center.y - dest.center.y); // 垂直中心偏移
+      case 'up':
+      case 'down':
+        return Math.abs(source.center.x - dest.center.x); // 水平中心偏移
+      default:
+        return 0;
+    }
+  }
+  function snGetWeightedDistanceFor(major, minor) {
+    return 13 * major * major + minor * minor;
   }
 
-  function generateDistanceFunction(targetRect) {
-    return {
-      nearPlumbLineIsBetter: function(rect) {
-        var d;
-        if (rect.center.x < targetRect.center.x) {
-          d = targetRect.center.x - rect.right;
-        } else {
-          d = rect.left - targetRect.center.x;
-        }
-        return d < 0 ? 0 : d;
-      },
-      nearHorizonIsBetter: function(rect) {
-        var d;
-        if (rect.center.y < targetRect.center.y) {
-          d = targetRect.center.y - rect.bottom;
-        } else {
-          d = rect.top - targetRect.center.y;
-        }
-        return d < 0 ? 0 : d;
-      },
-      nearTargetLeftIsBetter: function(rect) {
-        var d;
-        if (rect.center.x < targetRect.center.x) {
-          d = targetRect.left - rect.right;
-        } else {
-          d = rect.left - targetRect.left;
-        }
-        return d < 0 ? 0 : d;
-      },
-      nearTargetTopIsBetter: function(rect) {
-        var d;
-        if (rect.center.y < targetRect.center.y) {
-          d = targetRect.top - rect.bottom;
-        } else {
-          d = rect.top - targetRect.top;
-        }
-        return d < 0 ? 0 : d;
-      },
-      topIsBetter: function(rect) {
-        return rect.top;
-      },
-      bottomIsBetter: function(rect) {
-        return -1 * rect.bottom;
-      },
-      leftIsBetter: function(rect) {
-        return rect.left;
-      },
-      rightIsBetter: function(rect) {
-        return -1 * rect.right;
-      }
-    };
+  // dest 是否完全在 source 的 direction 方向（边界版，Android isToDirectionOf）
+  function snIsToDirectionOf(direction, source, dest) {
+    switch (direction) {
+      case 'left':  return source.left >= dest.right;
+      case 'right': return source.right <= dest.left;
+      case 'up':    return source.top >= dest.bottom;
+      case 'down':  return source.bottom <= dest.top;
+      default:      return false;
+    }
   }
 
-  function prioritize(priorities) {
-    var destPriority = null;
-    for (var i = 0; i < priorities.length; i++) {
-      if (priorities[i].group.length) {
-        destPriority = priorities[i];
-        break;
-      }
+  // dest 是否至少部分在 source 的 direction 方向（Android isCandidate）
+  function snIsCandidate(source, dest, direction) {
+    switch (direction) {
+      case 'left':
+        return (source.right > dest.right || source.left >= dest.right) &&
+               source.left > dest.left;
+      case 'right':
+        return (source.left < dest.left || source.right <= dest.left) &&
+               source.right < dest.right;
+      case 'up':
+        return (source.bottom > dest.bottom || source.top >= dest.bottom) &&
+               source.top > dest.top;
+      case 'down':
+        return (source.top < dest.top || source.bottom <= dest.top) &&
+               source.bottom < dest.bottom;
+      default:
+        return false;
     }
-
-    if (!destPriority) {
-      return null;
-    }
-
-    var destDistance = destPriority.distance;
-
-    destPriority.group.sort(function(a, b) {
-      for (var i = 0; i < destDistance.length; i++) {
-        var distance = destDistance[i];
-        var delta = distance(a) - distance(b);
-        if (delta) {
-          return delta;
-        }
-      }
-      return 0;
-    });
-
-    return destPriority.group;
   }
 
-  // preferNearest=true：跨 section 查找，直线/斜向合并按距离竞争（就近原则）。
-  // preferNearest=false（默认）：section 内查找，保留上游分层（直线强于斜向）。
+  // 次轴投影是否重叠（Android beamsOverlap）
+  function snBeamsOverlap(direction, rect1, rect2) {
+    switch (direction) {
+      case 'left':
+      case 'right':
+        return (rect2.bottom >= rect1.top) && (rect2.top <= rect1.bottom);
+      case 'up':
+      case 'down':
+        return (rect2.right >= rect1.left) && (rect2.left <= rect1.right);
+      default:
+        return false;
+    }
+  }
+
+  // rect1 是否凭「beam 内」胜出 rect2（Android beamBeats）
+  function snBeamBeats(direction, source, rect1, rect2) {
+    var r1In = snBeamsOverlap(direction, source, rect1);
+    var r2In = snBeamsOverlap(direction, source, rect2);
+    if (r2In || !r1In) {
+      return false;
+    }
+    if (!snIsToDirectionOf(direction, source, rect2)) {
+      return true;
+    }
+    if (direction === 'left' || direction === 'right') {
+      return true;
+    }
+    return snMajorAxisDistance(direction, source, rect1) <
+           snMajorAxisDistanceToFarEdge(direction, source, rect2);
+  }
+
+  // rect1 是否比 rect2 更优（Android isBetterCandidate）
+  function snIsBetterCandidate(direction, source, rect1, rect2) {
+    if (!snIsCandidate(source, rect1, direction)) {
+      return false;
+    }
+    if (!snIsCandidate(source, rect2, direction)) {
+      return true;
+    }
+    if (snBeamBeats(direction, source, rect1, rect2)) {
+      return true;
+    }
+    if (snBeamBeats(direction, source, rect2, rect1)) {
+      return false;
+    }
+    return snGetWeightedDistanceFor(
+             snMajorAxisDistance(direction, source, rect1),
+             snMinorAxisDistance(direction, source, rect1)) <
+           snGetWeightedDistanceFor(
+             snMajorAxisDistance(direction, source, rect2),
+             snMinorAxisDistance(direction, source, rect2));
+  }
+
+  // preferNearest 入参保留以兼容现有调用（navigateWithinScrollScope 仍传 true），
+  // Android 模型下不再控制打分分层，仅占位。
   function navigate(target, direction, candidates, config, preferNearest) {
     if (!target || !direction || !candidates || !candidates.length) {
       return null;
     }
-
-    var rects = [];
-    for (var i = 0; i < candidates.length; i++) {
-      var rect = getRect(candidates[i]);
-      if (rect) {
-        rects.push(rect);
-      }
-    }
-    if (!rects.length) {
-      return null;
-    }
-
     var targetRect = getRect(target);
     if (!targetRect) {
       return null;
     }
 
-    var distanceFunction = generateDistanceFunction(targetRect);
-
-    var groups = partition(
-      rects,
-      targetRect,
-      config.straightOverlapThreshold
-    );
-
-    var internalGroups = partition(
-      groups[4],
-      targetRect.center,
-      config.straightOverlapThreshold
-    );
-
-    var priorities;
-    var df = distanceFunction;
-    var internalGroup, straightGroup, diagonalGroups;
-    var internalDist, straightDist, diagonalDist, mergedDist;
-
-    switch (direction) {
-      case 'left':
-        internalGroup = internalGroups[0].concat(internalGroups[3])
-                                          .concat(internalGroups[6]);
-        straightGroup = groups[3];
-        diagonalGroups = groups[0].concat(groups[6]);
-        internalDist = [df.nearPlumbLineIsBetter, df.topIsBetter];
-        straightDist = [df.nearPlumbLineIsBetter, df.topIsBetter];
-        diagonalDist = [df.nearHorizonIsBetter, df.rightIsBetter,
-                        df.nearTargetTopIsBetter];
-        // 合并时主轴=水平最近，次轴=垂直对齐
-        mergedDist = [df.nearPlumbLineIsBetter, df.nearHorizonIsBetter,
-                      df.topIsBetter];
-        break;
-      case 'right':
-        internalGroup = internalGroups[2].concat(internalGroups[5])
-                                          .concat(internalGroups[8]);
-        straightGroup = groups[5];
-        diagonalGroups = groups[2].concat(groups[8]);
-        internalDist = [df.nearPlumbLineIsBetter, df.topIsBetter];
-        straightDist = [df.nearPlumbLineIsBetter, df.topIsBetter];
-        diagonalDist = [df.nearHorizonIsBetter, df.leftIsBetter,
-                        df.nearTargetTopIsBetter];
-        mergedDist = [df.nearPlumbLineIsBetter, df.nearHorizonIsBetter,
-                      df.topIsBetter];
-        break;
-      case 'up':
-        internalGroup = internalGroups[0].concat(internalGroups[1])
-                                          .concat(internalGroups[2]);
-        straightGroup = groups[1];
-        diagonalGroups = groups[0].concat(groups[2]);
-        internalDist = [df.nearHorizonIsBetter, df.leftIsBetter];
-        straightDist = [df.nearHorizonIsBetter, df.leftIsBetter];
-        diagonalDist = [df.nearPlumbLineIsBetter, df.bottomIsBetter,
-                        df.nearTargetLeftIsBetter];
-        // 合并时主轴=垂直最近，次轴=水平对齐
-        mergedDist = [df.nearHorizonIsBetter, df.nearPlumbLineIsBetter,
-                      df.leftIsBetter];
-        break;
-      case 'down':
-        internalGroup = internalGroups[6].concat(internalGroups[7])
-                                          .concat(internalGroups[8]);
-        straightGroup = groups[7];
-        diagonalGroups = groups[6].concat(groups[8]);
-        internalDist = [df.nearHorizonIsBetter, df.leftIsBetter];
-        straightDist = [df.nearHorizonIsBetter, df.leftIsBetter];
-        diagonalDist = [df.nearPlumbLineIsBetter, df.topIsBetter,
-                        df.nearTargetLeftIsBetter];
-        mergedDist = [df.nearHorizonIsBetter, df.nearPlumbLineIsBetter,
-                      df.leftIsBetter];
-        break;
-      default:
-        return null;
-    }
-
-    if (preferNearest) {
-      // 跨 section：直线与斜向候选合并为一层按距离竞争，最近一行/一列胜出，
-      // 修复「远处同列元素抢焦点」（如按下从按钮行越过相邻行跳到远处对齐元素）。
-      priorities = [
-        { group: internalGroup, distance: internalDist },
-        {
-          group: config.straightOnly
-            ? straightGroup
-            : straightGroup.concat(diagonalGroups),
-          distance: mergedDist
-        }
-      ];
-    } else {
-      // section 内：保留上游分层（直线候选强于斜向），保证同行/同列相邻项优先，
-      // 不被「不同行/不同列但像素更近」的元素抢走（如变宽卡片墙里同行相邻卡）。
-      priorities = [
-        { group: internalGroup, distance: internalDist },
-        { group: straightGroup, distance: straightDist },
-        { group: diagonalGroups, distance: diagonalDist }
-      ];
-      if (config.straightOnly) {
-        priorities.pop();
+    // 1) 转 rect + 过 isCandidate 方向门（straightOnly 时额外要求 beam 内）
+    var rects = [];
+    for (var i = 0; i < candidates.length; i++) {
+      var r = getRect(candidates[i]);
+      if (!r) {
+        continue;
       }
+      if (!snIsCandidate(targetRect, r, direction)) {
+        continue;
+      }
+      if (config.straightOnly && !snBeamsOverlap(direction, targetRect, r)) {
+        continue;
+      }
+      rects.push(r);
     }
-
-    var destGroup = prioritize(priorities);
-    if (!destGroup) {
+    if (!rects.length) {
       return null;
     }
 
-    var dest = null;
+    // 2) 两两 isBetterCandidate 维护当前最优
+    var best = rects[0];
+    for (var k = 1; k < rects.length; k++) {
+      if (snIsBetterCandidate(direction, targetRect, rects[k], best)) {
+        best = rects[k];
+      }
+    }
+
+
+
+
+    // 3) rememberSource：previous.target 仍是合法候选且不被 best 严格击败 → 复焦，
+    //    保留「左右往返不抖动」语义（Android 原生无此机制，此处嫁接）。
     if (config.rememberSource &&
         config.previous &&
         config.previous.destination === target &&
         config.previous.reverse === direction) {
-      for (var j = 0; j < destGroup.length; j++) {
-        if (destGroup[j].element === config.previous.target) {
-          dest = destGroup[j].element;
+      for (var j = 0; j < rects.length; j++) {
+        if (rects[j].element === config.previous.target) {
+          if (!snIsBetterCandidate(direction, targetRect, best, rects[j])) {
+            return rects[j].element;
+          }
           break;
         }
       }
     }
 
-    if (!dest) {
-      dest = destGroup[0].element;
-    }
-
-    return dest;
+    return best.element;
   }
 
   /********************/
@@ -770,6 +666,50 @@ var $: any = null;
     return navigate(target, direction, candidates, config, preferNearest);
   }
 
+  // section 级方向剪枝：跨区收集候选前，按「该 section 所有项的 union 包围盒」
+  // 过 Android isCandidate 方向门，只剪掉「纯反方向」section（如按左时整个在右侧的）。
+  // beam 内/外不在此区分，留给项级 snBeamBeats。容器/空 section 天然跳过。
+  // sectionNavMap：focusNext 已构造的 { sectionId: navigableElements[] }，复用不重查。
+  function filterCandidatesByDirection(source, direction, sectionNavMap, excludeSectionId) {
+    var srcRect = getRect(source);
+    var kept = [];
+    for (var id in sectionNavMap) {
+      if (id === excludeSectionId) {
+        continue;
+      }
+      var elems = sectionNavMap[id];
+      if (!elems || !elems.length) {
+        continue; // 容器 section / 空 section 跳过
+      }
+      var left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+      var rects = [];
+      for (var i = 0; i < elems.length; i++) {
+        var r = getRect(elems[i]);
+        if (!r) {
+          continue;
+        }
+        rects.push(r);
+        if (r.left < left) { left = r.left; }
+        if (r.top < top) { top = r.top; }
+        if (r.right > right) { right = r.right; }
+        if (r.bottom > bottom) { bottom = r.bottom; }
+      }
+      if (!rects.length) {
+        continue;
+      }
+      var unionRect = {
+        left: left, top: top, right: right, bottom: bottom,
+        width: right - left, height: bottom - top
+      };
+      if (snIsCandidate(srcRect, unionRect, direction)) {
+        for (var j = 0; j < rects.length; j++) {
+          kept.push(rects[j].element);
+        }
+      }
+    }
+    return kept;
+  }
+
   function focusNext(direction, currentFocusedElement, currentSectionId) {
     var extSelector =
       currentFocusedElement.getAttribute('data-sn-' + direction);
@@ -805,11 +745,24 @@ var $: any = null;
       );
 
       if (!next && config.restrict == 'self-first') {
-        // 离开本 section 跨区查找：就近原则 + 滚动容器感知
+        // 离开本 section 跨区查找：先做 section 级方向剪枝（剪掉纯反方向 section），
+        // 再走滚动容器感知 + 项级 Android 打分。
+        var prunedCandidates = filterCandidatesByDirection(
+          currentFocusedElement,
+          direction,
+          sectionNavigableElements,
+          currentSectionId
+        );
+        if (!prunedCandidates.length) {
+          // 剪光兜底：回退全量（极端布局下某方向无任何 section 过门时不退化为死焦点）
+          prunedCandidates = exclude(
+            allNavigableElements, currentSectionNavigableElements
+          );
+        }
         next = navigateWithinScrollScope(
           currentFocusedElement,
           direction,
-          exclude(allNavigableElements, currentSectionNavigableElements),
+          prunedCandidates,
           config,
           true
         );

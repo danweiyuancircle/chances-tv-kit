@@ -19,7 +19,16 @@
 6. **构建目标 Chromium 53**：tsup `target: 'chrome53'`，禁用 ES2015+ 语法降级。
 7. **文件命名**：`spatial_navigation.js` → `spatial-navigation.ts`。
 
-主流程算法（`partition` / `prioritize` / `navigate` / section 边界策略）**未修改**。
+## 导航打分算法的重写（fork 后偏离上游）
+
+自 v0.4.0 起，候选打分算法改写为 [Android `FocusFinder`](https://cs.android.com/android/platform/superproject/+/main:frameworks/base/core/java/android/view/FocusFinder.java) 模型，不再沿用上游的 9 宫格分块 + 直线/斜向分层比较：
+
+8. **移除上游 `partition` / `generateDistanceFunction` / `prioritize`**：不再做 9 宫格分块与字典序距离分层。
+9. **`navigate` 重写为 Android `FocusFinder` 加权距离模型**：候选先过 `isCandidate` 方向门，再两两 `isBetterCandidate` 比较——beam（光束）内候选优先于 beam 外，按 `13 * majorAxisDistance² + minorAxisDistance²` 加权距离取最小。对应新增 `snIsCandidate` / `snBeamsOverlap` / `snBeamBeats` / `snMajorAxisDistance(ToFarEdge)` / `snMinorAxisDistance` / `snGetWeightedDistanceFor` / `snIsToDirectionOf` / `snIsBetterCandidate`。
+10. **新增 section 级方向剪枝 `filterCandidatesByDirection`**：跨 section 查找前，用各 section 项的并集包围盒过 `isCandidate`，剪掉纯反方向的整个 section。
+11. **保留**：`rememberSource` 复焦语义、section 边界策略（`restrict` / `enterTo` / `leaveFor`）、滚动容器感知（`navigateWithinScrollScope` / `getScrollScope`）、`getRect` 与事件系统。
+
+section 边界策略与公共 API 未变；变化的是「在候选集里选哪个」的几何打分核心。Android `FocusFinder` 源码为 AOSP（Apache-2.0）；本项目仅参考其算法逻辑并以 ES5 重新实现，未复制其源码。
 
 ## MPL 2.0 合规
 
@@ -35,3 +44,4 @@
 ### 变更日志
 
 - 2026-05-19：初始 fork，TS 化 + 移除 jQuery + ESM 化
+- 2026-06-05：打分算法重写为 Android `FocusFinder` 加权距离模型（移除 `partition`/`prioritize`，新增 section 级方向剪枝）
