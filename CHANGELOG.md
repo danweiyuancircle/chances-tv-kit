@@ -9,6 +9,17 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-05
+
+### Changed
+
+- `@chancestv/tv-focus` 方向键候选打分核心重写为 **Android TV `FocusFinder` 加权距离模型**：候选先过 `isCandidate` 方向门，beam（光束，即同行/同列）内候选优先于 beam 外，按 `13 × 主轴距离² + 次轴偏移²` 取最近。同行/同列直邻不再被「斜向但边缘更近」的元素抢走，方向感与电视遥控一致。移除原 9 宫格 `partition` / `prioritize` 分层比较。
+- section 边界策略（`restrict` / `enterTo` / `leaveFor`）、滚动容器感知、`rememberSource` 复焦语义、公共 API 与组件 props 均**保持不变**——仅「在候选集里选哪个」的几何打分逻辑改变，升级后同样的布局按键落点可能与旧版不同。
+
+### Added
+
+- section 级方向剪枝：跨 section 查找前，用各 section 项的并集包围盒过 `isCandidate`，将整体处于反方向的 section 整片排除，不再让其元素参与几何计算——低端 WebView 上按键开销进一步降低。
+
 ## [0.3.0] - 2026-06-04
 
 ### Removed (BREAKING)

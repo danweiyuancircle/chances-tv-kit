@@ -1,6 +1,6 @@
 {
   "name": "@chancestv/tv-focus",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "TV spatial-navigation focus system for Vue 3, tuned for legacy WebView (Chromium 53+).",
   "type": "module",
   "license": "MIT AND MPL-2.0",
