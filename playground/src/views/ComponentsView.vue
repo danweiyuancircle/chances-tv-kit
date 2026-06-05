@@ -128,6 +128,20 @@ const { scrollY } = useFocusScroll(scrollEl, 600)
           </EVirtual>
         </section>
 
+        <!-- EVirtual 纵向 -->
+        <section class="c-group">
+          <div class="c-label">EVirtual — 纵向（焦点居中滚动）</div>
+          <EVirtual
+            section-id="c-ev-v" direction="vertical" :items="nums"
+            :item-width="320" :item-height="64" :main-visible="5" :gap="12"
+            focus-key-prefix="c-evv" v-slot="{ item, focusKey }"
+          >
+            <EFocusable :focus-key="focusKey" v-slot="{ focused }">
+              <div class="c-cell c-cell-row" :class="{ hot: focused }">第 {{ item }} 项</div>
+            </EFocusable>
+          </EVirtual>
+        </section>
+
         <!-- EVirtual 网格 -->
         <section class="c-group">
           <div class="c-label">EVirtual — 网格（cross=4）</div>
@@ -184,4 +198,5 @@ const { scrollY } = useFocusScroll(scrollEl, 600)
   background: #2a2f3a; color: #cde; display: flex; align-items: center; justify-content: center; font-size: 24px;
 }
 .c-cell.hot { border-color: #4af; background: #34506e; }
+.c-cell-row { justify-content: flex-start; padding-left: 20px; box-sizing: border-box; font-size: 20px; }
 </style>
