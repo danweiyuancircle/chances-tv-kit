@@ -41,15 +41,15 @@ tv-kit's core is making **spatial-navigation focus work out of the box**: mark w
 
 #### How it finds focus automatically
 
-On each D-pad press, the engine reads candidate elements' live geometry (`getBoundingClientRect`), partitions them into a **3×3 grid** centered on the current focus, then ranks by distance with "straight direction first, diagonal second". So **no focus-relationship table to maintain** — however the layout changes or elements come and go, navigation follows the new positions automatically.
+On each D-pad press, the engine reads candidate elements' live geometry (`getBoundingClientRect`) and picks the best one using the **same weighted-distance model as Android TV's `FocusFinder`**: candidates first pass a directional gate (only those actually in the press direction survive), then those in the same row/column (inside the "beam") win over diagonal ones, ranked by `13 × major-axis distance² + minor-axis offset²`. The heavier major-axis weight means a **same-row neighbor always beats a geometrically closer diagonal element**, matching real TV remote feel. So **no focus-relationship table to maintain** — however the layout changes or elements come and go, navigation follows the new positions automatically.
 
 #### Focus lookup is pruned, so low-end boxes keep up
 
 OTT boxes are CPU-weak; scanning every focusable element and calling `getComputedStyle` on each keypress visibly stutters. The engine prunes the candidate set in several layers:
 
 - **Section restriction** (`restrict`): search the current section first by default, only widening outside if nothing is found — most keypresses never leave the section;
-- **Scroll-scope awareness + caching**: candidates are grouped by whether they share the focused element's scroll container (same-container first), with a `WeakMap` caching the element → scroll-container mapping so each keypress doesn't re-walk the DOM;
-- **Directional pre-filtering**: pressing left only compares the left-side groups, never the opposite direction.
+- **Section-level directional pruning**: when widening across sections, each section's overall bounding box is checked against the direction first — a section entirely to the right is skipped wholesale when pressing left, so none of its elements enter geometric comparison;
+- **Scroll-scope awareness + caching**: candidates are grouped by whether they share the focused element's scroll container (same-container first), with a `WeakMap` caching the element → scroll-container mapping so each keypress doesn't re-walk the DOM.
 
 The result: only a tiny subset actually enters geometric comparison per keypress, staying responsive even on Chromium 53-class hardware.
 
@@ -148,7 +148,7 @@ Releases run through tag-triggered GitHub Actions (npm Trusted Publishing / OIDC
 
 ## Acknowledgements
 
-- **[luke-chang/js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation)** — the spatial-navigation core of `@chancestv/tv-focus` is forked from this project (MPL-2.0). We TS-ified it, removed the jQuery dependency, converted it to ESM, and down-leveled the build target to Chromium 53; the core algorithm is unchanged. See [ATTRIBUTION.md](./packages/tv-focus/src/engine/ATTRIBUTION.md).
+- **[luke-chang/js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation)** — the spatial-navigation section framework of `@chancestv/tv-focus` (registration, boundary policies, scroll-scope awareness) is forked from this project (MPL-2.0), then TS-ified, de-jQueried, converted to ESM, and down-leveled to Chromium 53. Since v0.4.0 the candidate-scoring core was rewritten to Android TV's `FocusFinder` weighted-distance model (replacing the original 3×3 grid / layered ranking), with added section-level directional pruning. See [ATTRIBUTION.md](./packages/tv-focus/src/engine/ATTRIBUTION.md).
 
 ---
 

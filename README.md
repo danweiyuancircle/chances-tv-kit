@@ -41,15 +41,15 @@ TV 没有鼠标、没有触摸，全靠遥控器**上下左右 + 确认/返回**
 
 #### 它是怎么自动找焦点的
 
-按方向键时，引擎实时读各候选元素的几何位置（`getBoundingClientRect`），以当前焦点为中心做 **9 宫格分块**，再按「直线方向优先、斜向其次」分层比较距离，选出最该聚焦的那个。所以**布局怎么变、元素动态增删，都不用维护任何焦点关系表**——位置变了，导航自动跟着变。
+按方向键时，引擎实时读各候选元素的几何位置（`getBoundingClientRect`），用 **Android TV `FocusFinder` 同款的加权距离模型**选出最该聚焦的那个：候选先过方向门（只保留确实在按键方向上的元素），再优先选与当前焦点「同一行/同一列」（beam 光束内）的，同档按 `13 × 主轴距离² + 次轴偏移²` 取最近。主轴权重更高，所以**同行直邻永远赢过斜向更近的元素**，方向感和电视遥控一致。所以**布局怎么变、元素动态增删，都不用维护任何焦点关系表**——位置变了，导航自动跟着变。
 
 #### 焦点查找做了剪枝，低端盒子也跑得动
 
 OTT 盒子 CPU 弱，每次按键都全量遍历所有可聚焦元素、反复 `getComputedStyle` 会明显卡顿。引擎为此做了多层**候选集剪枝**：
 
 - **分区限制**（`restrict`）：默认只在当前 section 内找，找不到才扩到区外，绝大多数按键不出本区；
-- **滚动容器感知 + 缓存**：候选先按「是否和焦点在同一滚动容器」分组、同容器优先，且用 `WeakMap` 缓存「元素 → 滚动容器」映射，避免每次按键重复向上 walk DOM；
-- **方向预筛选**：向左只比较左侧分组，不去算反方向的元素。
+- **section 级方向剪枝**：跨区查找时，先按每个 section 的整体包围盒判方向——向左时整个在右侧的 section 直接整片跳过，连里面的元素都不参与几何计算；
+- **滚动容器感知 + 缓存**：候选先按「是否和焦点在同一滚动容器」分组、同容器优先，且用 `WeakMap` 缓存「元素 → 滚动容器」映射，避免每次按键重复向上 walk DOM。
 
 结果是：每次方向键真正参与几何比较的元素被压到很小一撮，在 Chromium 53 级别的真机上也能稳定跟手。
 
@@ -160,7 +160,7 @@ pnpm typecheck      # 所有包 vue-tsc --noEmit
 
 ## 致谢
 
-- **[luke-chang/js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation)** — `@chancestv/tv-focus` 的空间导航核心算法 fork 自此项目（MPL-2.0）。我们做了 TS 化、移除 jQuery 依赖、ESM 化、构建目标降级到 Chromium 53 等改造，主流程算法未改动。详见 [ATTRIBUTION.md](./packages/tv-focus/src/engine/ATTRIBUTION.md)。
+- **[luke-chang/js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation)** — `@chancestv/tv-focus` 的空间导航 section 框架（注册、边界策略、滚动容器感知）fork 自此项目（MPL-2.0），并做了 TS 化、移除 jQuery 依赖、ESM 化、构建目标降级到 Chromium 53 等改造。自 v0.4.0 起候选打分核心重写为 Android TV `FocusFinder` 加权距离模型（移除原 9 宫格分块/分层比较），并新增 section 级方向剪枝。详见 [ATTRIBUTION.md](./packages/tv-focus/src/engine/ATTRIBUTION.md)。
 
 ---
 
