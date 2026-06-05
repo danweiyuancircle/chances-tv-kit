@@ -1,0 +1,61 @@
+name: Deploy Playground to Pages
+
+# push 到 main 时，构建 playground 并部署到 GitHub Pages。
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# 部署 Pages 所需权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个部署，新 push 取消进行中的旧部署
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.19.0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # 先构建 tv-focus / tv-ui（playground 依赖 workspace 包），再构建 playground
+      - name: 构建库
+        run: pnpm -r --filter "./packages/*" build
+
+      - name: 构建 playground
+        env:
+          PAGES_BASE: /chances-tv-kit/
+        run: pnpm --filter playground build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: playground/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
