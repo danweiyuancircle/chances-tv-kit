@@ -747,25 +747,24 @@ var $: any = null;
       if (!next && config.restrict == 'self-first') {
         // 离开本 section 跨区查找：先做 section 级方向剪枝（剪掉纯反方向 section），
         // 再走滚动容器感知 + 项级 Android 打分。
+        // 剪光（该方向无任何 section 的 union 盒过门）即视为该方向无候选，next 保持 null，
+        // 由 focusNext 末尾 fireNavigatefailed 让焦点原地不动——不再回退全量，
+        // 避免把「右上方斜向」的项捞回项级打分导致跨行斜跳。
         var prunedCandidates = filterCandidatesByDirection(
           currentFocusedElement,
           direction,
           sectionNavigableElements,
           currentSectionId
         );
-        if (!prunedCandidates.length) {
-          // 剪光兜底：回退全量（极端布局下某方向无任何 section 过门时不退化为死焦点）
-          prunedCandidates = exclude(
-            allNavigableElements, currentSectionNavigableElements
+        if (prunedCandidates.length) {
+          next = navigateWithinScrollScope(
+            currentFocusedElement,
+            direction,
+            prunedCandidates,
+            config,
+            true
           );
         }
-        next = navigateWithinScrollScope(
-          currentFocusedElement,
-          direction,
-          prunedCandidates,
-          config,
-          true
-        );
       }
     } else {
       // restrict:'none'：全局单平面，保留上游分层（直线优先），仅叠加滚动容器感知

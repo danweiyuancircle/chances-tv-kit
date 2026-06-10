@@ -9,6 +9,13 @@
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-06-10
+
+### Fixed
+
+- `@chancestv/tv-focus`：修复 `restrict: self-first` section 跨区导航的剪光兜底缺陷。某方向上没有任何 section 的并集包围盒通过 Android 方向门时，此前会无差别回退全量候选再做项级几何打分，导致「行内已到该方向边界、相邻 section 整体偏向反方向」时焦点斜跳到非预期行（如片源行最右项按右键跳到上方传输行）。现改为该方向无 section 过门即视为无候选，焦点原地不动（`navigatefailed`），符合电视遥控方向直觉。
+- `@chancestv/tv-ui`：随 `tv-focus` 锁步发版，本身无代码改动。
+
 ## [0.4.1] - 2026-06-05
 
 ### Changed
